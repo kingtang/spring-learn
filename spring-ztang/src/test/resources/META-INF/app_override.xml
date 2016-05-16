@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="hello" class="org.springframework.domain.override.HelloWorld">
+    	<replaced-method name="sayHello" replacer="relpace"/>
+    </bean>
+	
+	<bean id="relpace" class="org.springframework.domain.override.MethodReplace">
+		<property name="target" ref="hello"/>
+	</bean>
+
+</beans>

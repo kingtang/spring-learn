@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="cycle_a" class="org.springframework.domain.cycle.CycleA">
+    <property name="b" ref="cycle_b"/>
+    </bean>
+	
+	<bean id="cycle_b" class="org.springframework.domain.cycle.CycleB">
+	<property name="a" ref="cycle_a"/>
+	</bean>
+
+</beans>

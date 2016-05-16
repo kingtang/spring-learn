@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="parent" class="org.springframework.domain.parent.Parent">
+    <property name="address" value="parent_address"/>
+    </bean>
+	
+	<bean id="child" class="org.springframework.domain.parent.Child" parent="parent">
+	<property name="name" value="child_name"/>
+	</bean>
+
+</beans>
