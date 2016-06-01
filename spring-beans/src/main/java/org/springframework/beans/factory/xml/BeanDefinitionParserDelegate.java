@@ -448,6 +448,7 @@ public class BeanDefinitionParserDelegate {
 	 * {@link org.springframework.beans.factory.parsing.ProblemReporter}.
 	 */
 	public BeanDefinitionHolder parseBeanDefinitionElement(Element ele, BeanDefinition containingBean) {
+		//id和name属性
 		String id = ele.getAttribute(ID_ATTRIBUTE);
 		String nameAttr = ele.getAttribute(NAME_ATTRIBUTE);
 
@@ -470,6 +471,7 @@ public class BeanDefinitionParserDelegate {
 			checkNameUniqueness(beanName, aliases, ele);
 		}
 
+		//继续解析其他的属性
 		AbstractBeanDefinition beanDefinition = parseBeanDefinitionElement(ele, beanName, containingBean);
 		if (beanDefinition != null) {
 			if (!StringUtils.hasText(beanName)) {
@@ -535,6 +537,7 @@ public class BeanDefinitionParserDelegate {
 	public AbstractBeanDefinition parseBeanDefinitionElement(
 			Element ele, String beanName, BeanDefinition containingBean) {
 
+		//入栈底
 		this.parseState.push(new BeanEntry(beanName));
 
 		String className = null;
@@ -547,8 +550,10 @@ public class BeanDefinitionParserDelegate {
 			if (ele.hasAttribute(PARENT_ATTRIBUTE)) {
 				parent = ele.getAttribute(PARENT_ATTRIBUTE);
 			}
+			//创建beandefinition
 			AbstractBeanDefinition bd = createBeanDefinition(className, parent);
 
+			//解析bean元素的属性
 			parseBeanDefinitionAttributes(ele, beanName, containingBean, bd);
 			bd.setDescription(DomUtils.getChildElementValueByTagName(ele, DESCRIPTION_ELEMENT));
 
@@ -556,6 +561,7 @@ public class BeanDefinitionParserDelegate {
 			parseLookupOverrideSubElements(ele, bd.getMethodOverrides());
 			parseReplacedMethodSubElements(ele, bd.getMethodOverrides());
 
+			//解析构造函数的参数
 			parseConstructorArgElements(ele, bd);
 			parsePropertyElements(ele, bd);
 			parseQualifierElements(ele, bd);
@@ -583,6 +589,7 @@ public class BeanDefinitionParserDelegate {
 
 	/**
 	 * Apply the attributes of the given bean element to the given bean * definition.
+	 * 解析bean的属性
 	 * @param ele bean declaration element
 	 * @param beanName bean name
 	 * @param containingBean containing bean definition
@@ -760,6 +767,7 @@ public class BeanDefinitionParserDelegate {
 		for (int i = 0; i < nl.getLength(); i++) {
 			Node node = nl.item(i);
 			if (isCandidateElement(node) && nodeNameEquals(node, CONSTRUCTOR_ARG_ELEMENT)) {
+				//解析参数，有的构造函数参数带index,还可以根据type匹配，或者根据参数名做匹配
 				parseConstructorArgElement((Element) node, bd);
 			}
 		}

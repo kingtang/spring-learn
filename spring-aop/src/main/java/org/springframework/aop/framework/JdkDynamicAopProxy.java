@@ -109,13 +109,18 @@ final class JdkDynamicAopProxy implements AopProxy, InvocationHandler, Serializa
 	public Object getProxy() {
 		return getProxy(ClassUtils.getDefaultClassLoader());
 	}
-
+	
+	/**
+	 * JDK创建代理的逻辑，和平时我们使用的方法一样，JdkDynamicAopProxy本身作为InvocationHandler
+	 */
 	public Object getProxy(ClassLoader classLoader) {
 		if (logger.isDebugEnabled()) {
 			logger.debug("Creating JDK dynamic proxy: target source is " + this.advised.getTargetSource());
 		}
+		//获取完整的需要被代理的接口，这里之所以强调完整是因为spring默认添加SpringProxy和Advice两个接口
 		Class<?>[] proxiedInterfaces = AopProxyUtils.completeProxiedInterfaces(this.advised);
 		findDefinedEqualsAndHashCodeMethods(proxiedInterfaces);
+		//此处仅仅是创建代理，具体怎么执行advice还是应该看invoke方法是怎么处理的，创建代理容易，紧紧需要接口即可，但是代理正常工作则需要稍复杂的逻辑
 		return Proxy.newProxyInstance(classLoader, proxiedInterfaces, this);
 	}
 
@@ -146,6 +151,7 @@ final class JdkDynamicAopProxy implements AopProxy, InvocationHandler, Serializa
 	 * Implementation of {@code InvocationHandler.invoke}.
 	 * <p>Callers will see exactly the exception thrown by the target,
 	 * unless a hook method throws an exception.
+	 * 使用jdk的代理逻辑不复杂，执行拦截链，核心是ReflectiveMethodInvocation的proceed方法，不断的包装proceed方法驱动链执行
 	 */
 	public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 		MethodInvocation invocation;
@@ -187,6 +193,7 @@ final class JdkDynamicAopProxy implements AopProxy, InvocationHandler, Serializa
 			}
 
 			// Get the interception chain for this method.
+			//获取拦截器链
 			List<Object> chain = this.advised.getInterceptorsAndDynamicInterceptionAdvice(method, targetClass);
 
 			// Check whether we have any advice. If we don't, we can fallback on direct
@@ -199,6 +206,7 @@ final class JdkDynamicAopProxy implements AopProxy, InvocationHandler, Serializa
 			}
 			else {
 				// We need to create a method invocation...
+				//创建此类用于执行整个代理的过程
 				invocation = new ReflectiveMethodInvocation(proxy, target, method, args, targetClass, chain);
 				// Proceed to the joinpoint through the interceptor chain.
 				retVal = invocation.proceed();

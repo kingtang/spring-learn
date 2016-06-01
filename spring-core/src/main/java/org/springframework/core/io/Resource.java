@@ -65,6 +65,7 @@ public interface Resource extends InputStreamSource {
 	boolean isReadable();
 
 	/**
+	 * 如果返回true，InputStream不能被重复读，读完后必须关闭以保证资源不会泄露。
 	 * Return whether this resource represents a handle with an open
 	 * stream. If true, the InputStream cannot be read multiple times,
 	 * and must be read and closed to avoid resource leaks.

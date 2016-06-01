@@ -71,6 +71,7 @@ public final class Property {
 		this.objectType = objectType;
 		this.readMethod = readMethod;
 		this.writeMethod = writeMethod;
+		//解析方法参数，里面的逻辑还是听复杂的，尤其涉及到泛型
 		this.methodParameter = resolveMethodParameter();
 		this.name = (name == null ? resolveName() : name);
 	}
@@ -187,6 +188,7 @@ public final class Property {
 
 	private MethodParameter resolveParameterType(MethodParameter parameter) {
 		// needed to resolve generic property types that parameterized by sub-classes e.g. T getFoo();
+		//解析参数类型，其中包括泛型参数，比如T getFoo()，实际参数类型由子类实例化
 		GenericTypeResolver.resolveParameterType(parameter, getObjectType());
 		return parameter;
 	}

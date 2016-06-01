@@ -119,16 +119,19 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
 	 */
 	@Override
 	protected final void refreshBeanFactory() throws BeansException {
+		//如果之前已经存在了bean factory则销毁并且关闭
 		if (hasBeanFactory()) {
 			destroyBeans();
 			closeBeanFactory();
 		}
 		try {
+			//新创建bean factory，设置id,以id做区分
 			DefaultListableBeanFactory beanFactory = createBeanFactory();
 			beanFactory.setSerializationId(getId());
 			customizeBeanFactory(beanFactory);
 			loadBeanDefinitions(beanFactory);
 			synchronized (this.beanFactoryMonitor) {
+				//DefaultListableBeanFactory类型的bean工厂
 				this.beanFactory = beanFactory;
 			}
 		}
@@ -215,6 +218,7 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
 		if (this.allowCircularReferences != null) {
 			beanFactory.setAllowCircularReferences(this.allowCircularReferences);
 		}
+		//注册QualifierAnnotationAutowireCandidateResolver用于支持qualifier
 		beanFactory.setAutowireCandidateResolver(new QualifierAnnotationAutowireCandidateResolver());
 	}
 

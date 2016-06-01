@@ -67,9 +67,18 @@ public class PropertySourcesPropertyResolver extends AbstractPropertyResolver {
 
 	@Override
 	protected String getPropertyAsRawString(String key) {
+		//默认转换为String类型
 		return getProperty(key, String.class, false);
 	}
 
+	/**
+	 * 获取属性值，主要是两步，第一步从propertySources获取对应key的值，第二步完成类型装换，主要借助conversionService
+	 * 该属性在类加载的时候完成不同类之间转换converter的注册。
+	 * @param key
+	 * @param targetValueType
+	 * @param resolveNestedPlaceholders
+	 * @return
+	 */
 	protected <T> T getProperty(String key, Class<T> targetValueType, boolean resolveNestedPlaceholders) {
 		boolean debugEnabled = logger.isDebugEnabled();
 		if (logger.isTraceEnabled()) {

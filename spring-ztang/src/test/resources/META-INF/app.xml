@@ -9,5 +9,4 @@
 	
 	<bean id="student" class="org.springframework.domain.Student">
 	</bean>
-
 </beans>

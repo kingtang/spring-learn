@@ -269,12 +269,14 @@ public abstract class AbstractAutoProxyCreator extends ProxyConfig
 	}
 
 	public Object postProcessBeforeInstantiation(Class<?> beanClass, String beanName) throws BeansException {
+		//获取key，很简单的组装
 		Object cacheKey = getCacheKey(beanClass, beanName);
 
 		if (beanName == null || !this.targetSourcedBeans.containsKey(beanName)) {
 			if (this.advisedBeans.containsKey(cacheKey)) {
 				return null;
 			}
+			//基础类不进行代理
 			if (isInfrastructureClass(beanClass) || shouldSkip(beanClass, beanName)) {
 				this.advisedBeans.put(cacheKey, Boolean.FALSE);
 				return null;
@@ -358,9 +360,11 @@ public abstract class AbstractAutoProxyCreator extends ProxyConfig
 		}
 
 		// Create proxy if we have advice.
+		//postProcessBeforeInstantiation方法已经解析了注解并且构造了对应的抽象，此处便是根据抽象构造代理
 		Object[] specificInterceptors = getAdvicesAndAdvisorsForBean(bean.getClass(), beanName, null);
 		if (specificInterceptors != DO_NOT_PROXY) {
 			this.advisedBeans.put(cacheKey, Boolean.TRUE);
+			//创建代理，参数三表示代理需要织入的拦截器，参数一表示被代理的类型，参数四表示被代理对象也即目标对象
 			Object proxy = createProxy(bean.getClass(), beanName, specificInterceptors, new SingletonTargetSource(bean));
 			this.proxyTypes.put(cacheKey, proxy.getClass());
 			return proxy;
@@ -450,13 +454,16 @@ public abstract class AbstractAutoProxyCreator extends ProxyConfig
 	protected Object createProxy(
 			Class<?> beanClass, String beanName, Object[] specificInterceptors, TargetSource targetSource) {
 
+		//构造代理交由代理工厂
 		ProxyFactory proxyFactory = new ProxyFactory();
 		// Copy our properties (proxyTargetClass etc) inherited from ProxyConfig.
 		proxyFactory.copyFrom(this);
-
+		
+		//根据个性配置判断是否代理
 		if (!shouldProxyTargetClass(beanClass, beanName)) {
 			// Must allow for introductions; can't just set interfaces to
 			// the target's interfaces only.
+			//获取该类实现的接口
 			Class<?>[] targetInterfaces = ClassUtils.getAllInterfacesForClass(beanClass, this.proxyClassLoader);
 			for (Class<?> targetInterface : targetInterfaces) {
 				proxyFactory.addInterface(targetInterface);
@@ -475,7 +482,7 @@ public abstract class AbstractAutoProxyCreator extends ProxyConfig
 		if (advisorsPreFiltered()) {
 			proxyFactory.setPreFiltered(true);
 		}
-
+		//经过前面数据的准备，真正的创建代理交由getProxy方法
 		return proxyFactory.getProxy(this.proxyClassLoader);
 	}
 
@@ -543,6 +550,7 @@ public abstract class AbstractAutoProxyCreator extends ProxyConfig
 
 		Advisor[] advisors = new Advisor[allInterceptors.size()];
 		for (int i = 0; i < allInterceptors.size(); i++) {
+			//wrap，方法不复杂，针对不同种类的Advice做不同的处理
 			advisors[i] = this.advisorAdapterRegistry.wrap(allInterceptors.get(i));
 		}
 		return advisors;

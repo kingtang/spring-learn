@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 /**
+ * InputStream类型的source，是Resource接口的基础接口
  * Simple interface for objects that are sources for an {@link InputStream}.
  *
  * <p>This is the base interface for Spring's more extensive {@link Resource} interface.

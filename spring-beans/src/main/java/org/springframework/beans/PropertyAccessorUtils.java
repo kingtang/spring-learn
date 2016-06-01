@@ -39,6 +39,7 @@ public abstract class PropertyAccessorUtils {
 
 	/**
 	 * Check whether the given property path indicates an indexed or nested property.
+	 * spring支持属性嵌套或者带下标，此处判断是否为特殊属性
 	 * @param propertyPath the property path to check
 	 * @return whether the path indicates an indexed or nested property
 	 */

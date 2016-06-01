@@ -72,6 +72,7 @@ public class ProxyCreatorSupport extends AdvisedSupport {
 	 * Return the AopProxyFactory that this ProxyConfig uses.
 	 */
 	public AopProxyFactory getAopProxyFactory() {
+		//返回默认的aop代理工厂，（构造函数初始化）org.springframework.aop.framework.DefaultAopProxyFactory
 		return this.aopProxyFactory;
 	}
 
@@ -102,6 +103,7 @@ public class ProxyCreatorSupport extends AdvisedSupport {
 		if (!this.active) {
 			activate();
 		}
+		//委托给aop代理工厂创建代理
 		return getAopProxyFactory().createAopProxy(this);
 	}
 

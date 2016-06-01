@@ -150,7 +150,8 @@ final class CglibAopProxy implements AopProxy, Serializable {
 	public Object getProxy() {
 		return getProxy(null);
 	}
-
+	
+	//核心方法，此方法为创建代理的核心逻辑
 	public Object getProxy(ClassLoader classLoader) {
 		if (logger.isDebugEnabled()) {
 			logger.debug("Creating CGLIB proxy: target source is " + this.advised.getTargetSource());
@@ -181,7 +182,9 @@ final class CglibAopProxy implements AopProxy, Serializable {
 					enhancer.setUseCache(false);
 				}
 			}
+			//设置父类，生成的代理继承该类，因此该类不能是final的，而且有可以方法的构造方法
 			enhancer.setSuperclass(proxySuperClass);
+			//默认会增加springproxy和advice两个接口
 			enhancer.setInterfaces(AopProxyUtils.completeProxiedInterfaces(this.advised));
 			enhancer.setNamingPolicy(SpringNamingPolicy.INSTANCE);
 			enhancer.setStrategy(new MemorySafeUndeclaredThrowableStrategy(UndeclaredThrowableException.class));
@@ -294,6 +297,7 @@ final class CglibAopProxy implements AopProxy, Serializable {
 		Callback targetDispatcher = isStatic ?
 				new StaticDispatcher(this.advised.getTargetSource().getTarget()) : new SerializableNoOp();
 
+		//创建callbak，设置拦截器链
 		Callback[] mainCallbacks = new Callback[]{
 			aopInterceptor, // for normal advice
 			targetInterceptor, // invoke target without considering advice, if optimized
@@ -757,6 +761,7 @@ final class CglibAopProxy implements AopProxy, Serializable {
 		 * </dl>
 		 */
 		public int accept(Method method) {
+			//该方法在被代理方法调用后调用，用于分析对应的被代理方法应该使用哪种advice
 			if (AopUtils.isFinalizeMethod(method)) {
 				logger.debug("Found finalize() method - using NO_OVERRIDE");
 				return NO_OVERRIDE;

@@ -125,6 +125,17 @@ public class PropertyPlaceholderHelper {
 		return parseStringValue(value, placeholderResolver, new HashSet<String>());
 	}
 
+	/**
+	 * 属性占位符解析，比如classpath*:/${app}其中的${app}会被实际属性代替，目前看到spring有两个地方用到
+	 * 此功能，其一：spring刚启动过程，应用系统的属性和环境信息属性替换占位符
+	 * 其二：配置集中化，将配置属性放到一个属性文件中，在spring的配置文件中通过占位符引用，此时的替换数据源来自指定的配置文件（可多个）
+	 * 此方法支持嵌套的解析比如${${app}}首先解析${app}假设为context，其次尝试解析${context}，此功能用到比较少。
+	 * 另一种嵌套类型为假设解析${app}为${context}则会继续解析${context}直到没有占位符
+	 * @param strVal
+	 * @param placeholderResolver
+	 * @param visitedPlaceholders
+	 * @return
+	 */
 	protected String parseStringValue(
 			String strVal, PlaceholderResolver placeholderResolver, Set<String> visitedPlaceholders) {
 
@@ -143,6 +154,7 @@ public class PropertyPlaceholderHelper {
 				// Recursive invocation, parsing placeholders contained in the placeholder key.
 				placeholder = parseStringValue(placeholder, placeholderResolver, visitedPlaceholders);
 				// Now obtain the value for the fully resolved key...
+				//解析占位符，此时已经去除了占位符标志，解析过程中会涉及到类型转换
 				String propVal = placeholderResolver.resolvePlaceholder(placeholder);
 				if (propVal == null && this.valueSeparator != null) {
 					int separatorIndex = placeholder.indexOf(this.valueSeparator);
@@ -158,6 +170,7 @@ public class PropertyPlaceholderHelper {
 				if (propVal != null) {
 					// Recursive invocation, parsing placeholders contained in the
 					// previously resolved placeholder value.
+					//继续循环调用解析
 					propVal = parseStringValue(propVal, placeholderResolver, visitedPlaceholders);
 					result.replace(startIndex, endIndex + this.placeholderSuffix.length(), propVal);
 					if (logger.isTraceEnabled()) {

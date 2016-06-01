@@ -156,7 +156,9 @@ public class SimpleInstantiationStrategy implements InstantiationStrategy {
 
 			Method priorInvokedFactoryMethod = currentlyInvokedFactoryMethod.get();
 			try {
+				//缓存工厂方法
 				currentlyInvokedFactoryMethod.set(factoryMethod);
+				//反射调用
 				return factoryMethod.invoke(factoryBean, args);
 			}
 			finally {

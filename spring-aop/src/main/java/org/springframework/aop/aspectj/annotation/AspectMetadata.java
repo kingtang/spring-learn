@@ -73,6 +73,7 @@ public class AspectMetadata {
 		Class<?> currClass = aspectClass;
 		AjType ajType = null;
 		while (!currClass.equals(Object.class)) {
+			//获取AspectJ的AJ类型
 			AjType ajTypeToCheck = AjTypeSystem.getAjType(currClass);
 			if (ajTypeToCheck.isAspect()) {
 				ajType = ajTypeToCheck;
@@ -90,6 +91,7 @@ public class AspectMetadata {
 
 		switch (this.ajType.getPerClause().getKind()) {
 			case SINGLETON :
+				//默认是单例类型
 				this.perClausePointcut = Pointcut.TRUE;
 				return;
 			case PERTARGET : case PERTHIS :

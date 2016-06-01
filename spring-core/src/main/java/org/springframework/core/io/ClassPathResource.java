@@ -33,6 +33,7 @@ import org.springframework.util.StringUtils;
  * <p>Supports resolution as {@code java.io.File} if the class path
  * resource resides in the file system, but not for resources in a JAR.
  * Always supports resolution as URL.
+ * 支持文件系统中的文件，但是不支持在jar中的资源
  *
  * @author Juergen Hoeller
  * @author Sam Brannen

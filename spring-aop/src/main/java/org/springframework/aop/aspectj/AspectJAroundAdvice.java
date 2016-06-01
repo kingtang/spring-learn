@@ -54,7 +54,9 @@ public class AspectJAroundAdvice extends AbstractAspectJAdvice implements Method
 		return true;
 	}
 
-
+	/**
+	 * around¿πΩÿ µœ÷
+	 */
 	public Object invoke(MethodInvocation mi) throws Throwable {
 		if (!(mi instanceof ProxyMethodInvocation)) {
 			throw new IllegalStateException("MethodInvocation is not a Spring ProxyMethodInvocation: " + mi);

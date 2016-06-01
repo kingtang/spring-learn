@@ -259,9 +259,13 @@ public class AspectJExpressionPointcut extends AbstractExpressionPointcut
 		}
 		return false;
 	}
-
+	
+	/**
+	 * 第一个参数为bean的方法，第二个参数为bean的宿主类，第三个参数为是否需要introduction
+	 */
 	public boolean matches(Method method, Class<?> targetClass, boolean beanHasIntroductions) {
 		checkReadyToMatch();
+		//获取最匹配的方法，优先获取targetClass中符合条件的方法
 		Method targetMethod = AopUtils.getMostSpecificMethod(method, targetClass);
 		ShadowMatch shadowMatch = getShadowMatch(targetMethod, method);
 
@@ -405,6 +409,7 @@ public class AspectJExpressionPointcut extends AbstractExpressionPointcut
 				shadowMatch = this.shadowMatchCache.get(targetMethod);
 				if (shadowMatch == null) {
 					try {
+						//尝试去匹配methodToMatch方法
 						shadowMatch = this.pointcutExpression.matchesMethodExecution(methodToMatch);
 					}
 					catch (ReflectionWorldException ex) {

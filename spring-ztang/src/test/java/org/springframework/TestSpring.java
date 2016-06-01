@@ -3,6 +3,8 @@ package org.springframework;
 import java.util.AbstractList;
 
 import org.junit.Test;
+import org.springframework.aop.MyTest;
+import org.springframework.aop.TestBean;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.config.BeanPostProcessor;
@@ -13,16 +15,17 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.domain.Student;
 import org.springframework.domain.User;
 import org.springframework.domain.cycle.CycleA;
-import org.springframework.domain.factory.UserFactory;
 import org.springframework.domain.override.HelloWorld;
 import org.springframework.domain.parent.Child;
 
+@SuppressWarnings("deprecation")
 public class TestSpring {
 	
 	@Test
 	public void classPathXml()
 	{
-		String configLocation = "classpath:/META-INF/app.xml";
+		String configLocation = "classpath:/META-INF/${app}";
+		@SuppressWarnings("resource")
 		ApplicationContext context = new ClassPathXmlApplicationContext(configLocation);
 		User user = (User)context.getBean("user");
 		System.out.println(user.toString());
@@ -33,6 +36,14 @@ public class TestSpring {
 	{
 		BeanFactory factory = new XmlBeanFactory(new ClassPathResource("META-INF/app.xml"));
 		User user = (User)factory.getBean("user");
+		System.out.println(user.toString());
+	}
+	
+	@Test
+	public void xmlFactorySimple()
+	{
+		BeanFactory factory = new XmlBeanFactory(new ClassPathResource("META-INF/app_simple.xml"));
+		Student user = (Student)factory.getBean("student");
 		System.out.println(user.toString());
 	}
 	
@@ -80,6 +91,33 @@ public class TestSpring {
 		User user = (User) factory.getBean("userFactory");
 		
 		System.out.println(user);
+	}
+	
+	@Test
+	public void factoryMethod2()
+	{
+		ApplicationContext context = new ClassPathXmlApplicationContext("META-INF/app_factory_method.xml");
+		User user = (User) context.getBean("userFactory");
+		
+		System.out.println(user);
+	}
+	
+	@Test
+	public void testAop()
+	{
+		ApplicationContext context = new ClassPathXmlApplicationContext("META-INF/app_aop.xml");
+		org.springframework.aop.Test user = (org.springframework.aop.Test) context.getBean("test");
+		
+		user.test();
+	}
+	
+	@Test
+	public void testAopCglib()
+	{
+		ApplicationContext context = new ClassPathXmlApplicationContext("META-INF/app_aop.xml");
+		MyTest user = (MyTest) context.getBean("myTest");
+		
+		user.test();
 	}
 	
 	@Test

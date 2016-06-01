@@ -143,13 +143,17 @@ public class ReflectiveMethodInvocation implements ProxyMethodInvocation, Clonea
 		this.arguments = arguments;
 	}
 
-
+	/**
+	 * 负责驱动拦截器链的主要方法，应用下标移动完成驱动链执行
+	 */
 	public Object proceed() throws Throwable {
 		//	We start with an index of -1 and increment early.
+		//满足此条件则调用原始的方法
 		if (this.currentInterceptorIndex == this.interceptorsAndDynamicMethodMatchers.size() - 1) {
 			return invokeJoinpoint();
 		}
-
+		
+		//依次获取Advice
 		Object interceptorOrInterceptionAdvice =
 				this.interceptorsAndDynamicMethodMatchers.get(++this.currentInterceptorIndex);
 		if (interceptorOrInterceptionAdvice instanceof InterceptorAndDynamicMethodMatcher) {

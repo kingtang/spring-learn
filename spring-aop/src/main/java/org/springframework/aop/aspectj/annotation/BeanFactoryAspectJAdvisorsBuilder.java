@@ -85,11 +85,14 @@ public class BeanFactoryAspectJAdvisorsBuilder {
 		synchronized (this) {
 			aspectNames = this.aspectBeanNames;
 			if (aspectNames == null) {
+				//获取所有AspectBean中的Advisor，一般一个Bean中可能有多个Advisor
 				List<Advisor> advisors = new LinkedList<Advisor>();
 				aspectNames = new LinkedList<String>();
+				//获取当前工厂内的所有Object及其子类
 				String[] beanNames =
 						BeanFactoryUtils.beanNamesForTypeIncludingAncestors(this.beanFactory, Object.class, true, false);
 				for (String beanName : beanNames) {
+					//默认所有的bean都是合适的advisor
 					if (!isEligibleBean(beanName)) {
 						continue;
 					}
@@ -100,12 +103,16 @@ public class BeanFactoryAspectJAdvisorsBuilder {
 					if (beanType == null) {
 						continue;
 					}
+					//判断一个类是否是方面类
 					if (this.advisorFactory.isAspect(beanType)) {
+						//该bean符合Aspect
 						aspectNames.add(beanName);
 						AspectMetadata amd = new AspectMetadata(beanType, beanName);
+						//默认是单例类型
 						if (amd.getAjType().getPerClause().getKind() == PerClauseKind.SINGLETON) {
 							MetadataAwareAspectInstanceFactory factory =
 									new BeanFactoryAspectInstanceFactory(this.beanFactory, beanName);
+							//获取Advisor
 							List<Advisor> classAdvisors = this.advisorFactory.getAdvisors(factory);
 							if (this.beanFactory.isSingleton(beanName)) {
 								this.advisorsCache.put(beanName, classAdvisors);

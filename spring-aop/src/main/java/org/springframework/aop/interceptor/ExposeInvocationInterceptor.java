@@ -85,9 +85,11 @@ public class ExposeInvocationInterceptor implements MethodInterceptor, Ordered, 
 	}
 
 	public Object invoke(MethodInvocation mi) throws Throwable {
+		//第一个进入的总是此方法，主要负责设置拦截器执行的上下文
 		MethodInvocation oldInvocation = invocation.get();
 		invocation.set(mi);
 		try {
+			//继续调用入口方法，此时拦截器链的第一个节点已经处在执行中
 			return mi.proceed();
 		}
 		finally {

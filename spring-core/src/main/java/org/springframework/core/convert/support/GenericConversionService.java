@@ -163,6 +163,7 @@ public class GenericConversionService implements ConfigurableConversionService {
 			throw new IllegalArgumentException("The source to convert from must be an instance of " +
 					sourceType + "; instead it was a " + source.getClass().getName());
 		}
+		//根据原类型和目标类型获取转换器
 		GenericConverter converter = getConverter(sourceType, targetType);
 		if (converter != null) {
 			Object result = ConversionUtils.invokeConverter(converter, source, sourceType, targetType);
@@ -221,6 +222,7 @@ public class GenericConversionService implements ConfigurableConversionService {
 	 * @see #getDefaultConverter(TypeDescriptor, TypeDescriptor)
 	 */
 	protected GenericConverter getConverter(TypeDescriptor sourceType, TypeDescriptor targetType) {
+		//构造key,重写equals和hashcode方法以便做特殊的相等判断和适应集合。
 		ConverterCacheKey key = new ConverterCacheKey(sourceType, targetType);
 		GenericConverter converter = this.converterCache.get(key);
 		if (converter != null) {

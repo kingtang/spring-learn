@@ -276,12 +276,14 @@ public class PathMatchingResourcePatternResolver implements ResourcePatternResol
 			// Only look for a pattern after a prefix here
 			// (to not get fooled by a pattern symbol in a strange prefix).
 			int prefixEnd = locationPattern.indexOf(":") + 1;
+			//matcher匹配是否有?或者*，此类表示Ant风格的路径，目前spring仅提供ant一种风格
 			if (getPathMatcher().isPattern(locationPattern.substring(prefixEnd))) {
 				// a file pattern
 				return findPathMatchingResources(locationPattern);
 			}
 			else {
 				// a single resource with the given name
+				//非ant风格则仅仅使用单个路径的获取方法即可。
 				return new Resource[] {getResourceLoader().getResource(locationPattern)};
 			}
 		}

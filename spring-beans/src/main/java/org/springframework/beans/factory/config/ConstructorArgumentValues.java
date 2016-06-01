@@ -265,6 +265,7 @@ public class ConstructorArgumentValues {
 	 * Look for the next generic argument value that matches the given type,
 	 * ignoring argument values that have already been used in the current
 	 * resolution process.
+	 * 匹配规则比较多，有参数名，参数类型，构造函数需要的参数类型和当前参数的类型比较等等
 	 * @param requiredType the type to match (can be {@code null} to find
 	 * an arbitrary next generic argument value)
 	 * @param requiredName the name to match (can be {@code null} to not

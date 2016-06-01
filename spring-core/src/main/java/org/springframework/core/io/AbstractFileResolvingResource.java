@@ -45,6 +45,7 @@ public abstract class AbstractFileResolvingResource extends AbstractResource {
 	 */
 	@Override
 	public File getFile() throws IOException {
+		//支持jboss的vfs协议
 		URL url = getURL();
 		if (url.getProtocol().startsWith(ResourceUtils.URL_PROTOCOL_VFS)) {
 			return VfsResourceDelegate.getResource(url).getFile();
@@ -93,6 +94,7 @@ public abstract class AbstractFileResolvingResource extends AbstractResource {
 				return getFile().exists();
 			}
 			else {
+				//支持远程的文件
 				// Try a URL connection content-length header...
 				URLConnection con = url.openConnection();
 				customizeConnection(con);

@@ -186,7 +186,14 @@ public abstract class AbstractPropertyResolver implements ConfigurablePropertyRe
 				this.valueSeparator, ignoreUnresolvablePlaceholders);
 	}
 
+	/**
+	 * 解析工作委托给helper，helper利用回调函数完成解析
+	 * @param text
+	 * @param helper
+	 * @return
+	 */
 	private String doResolvePlaceholders(String text, PropertyPlaceholderHelper helper) {
+		//回调函数调用内部的模板方法，所以最终的解析动作交给子类完成，目前只有PropertySourcesPropertyResolver一种实现
 		return helper.replacePlaceholders(text, new PropertyPlaceholderHelper.PlaceholderResolver() {
 			public String resolvePlaceholder(String placeholderName) {
 				return getPropertyAsRawString(placeholderName);

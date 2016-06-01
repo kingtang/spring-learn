@@ -105,6 +105,7 @@ public class TypeDescriptor implements Serializable {
 	 * @param property the property
 	 */
 	public TypeDescriptor(Property property) {
+		//根据property构造类型描述器
 		this(new BeanPropertyDescriptor(property));
 	}
 
@@ -591,6 +592,7 @@ public class TypeDescriptor implements Serializable {
 		this.annotations = annotations;
 	}
 
+	//最终构造器
 	TypeDescriptor(AbstractDescriptor descriptor) {
 		this.type = descriptor.getType();
 		this.elementTypeDescriptor = descriptor.getElementTypeDescriptor();

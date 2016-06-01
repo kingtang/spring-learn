@@ -302,6 +302,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 					sharedInstance = getSingleton(beanName, new ObjectFactory<Object>() {
 						public Object getObject() throws BeansException {
 							try {
+								//createBean方法为真正创建bean的逻辑
 								return createBean(beanName, mbd, args);
 							}
 							catch (BeansException ex) {
@@ -313,6 +314,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 							}
 						}
 					});
+					//此方法的目的是判断是应该返回bean本身还是返回工厂bean所创建的bean对象
 					bean = getObjectForBeanInstance(sharedInstance, name, beanName, mbd);
 				}
 
@@ -364,6 +366,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 		}
 
 		// Check if required type matches the type of the actual bean instance.
+		//类似属性的转换，更上层的bean同样需要类似的处理
 		if (requiredType != null && bean != null && !requiredType.isAssignableFrom(bean.getClass())) {
 			try {
 				return getTypeConverter().convertIfNecessary(bean, requiredType);
@@ -1328,6 +1331,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 	 * @see #setBeanExpressionResolver
 	 */
 	protected Object evaluateBeanDefinitionString(String value, BeanDefinition beanDefinition) {
+		//普通的beanfactory没有此功能，应用applicationcontext此属性非空
 		if (this.beanExpressionResolver == null) {
 			return value;
 		}

@@ -83,6 +83,13 @@ class BeanDefinitionValueResolver {
 
 
 	/**
+	 * 该方法为很重要的方法，主要负责对字段属性或者构造器的参数做解析，解析的类型根据注释有以下几类：
+	 * 1、BeanDefinition，内部bean为此类型，也为匿名类型
+	 * 2、RuntimeBeanReference，ref类型，此类型必须被解析
+	 * 3、ManagedList，集合类型list
+	 * 4、ManagedSet，集合类型set
+	 * 5、ManagedMap，集合类型map
+	 * 6、ordinary，普通类型或者null，遇到此类型直接返回
 	 * Given a PropertyValue, return a value, resolving any references to other
 	 * beans in the factory if necessary. The value could be:
 	 * <li>A BeanDefinition, which leads to the creation of a corresponding
@@ -103,10 +110,12 @@ class BeanDefinitionValueResolver {
 	public Object resolveValueIfNecessary(Object argName, Object value) {
 		// We must check each value to see whether it requires a runtime reference
 		// to another bean to be resolved.
+		//ref类的引用
 		if (value instanceof RuntimeBeanReference) {
 			RuntimeBeanReference ref = (RuntimeBeanReference) value;
 			return resolveReference(argName, ref);
 		}
+		//idref引用
 		else if (value instanceof RuntimeBeanNameReference) {
 			String refName = ((RuntimeBeanNameReference) value).getBeanName();
 			refName = String.valueOf(evaluate(refName));
@@ -182,14 +191,18 @@ class BeanDefinitionValueResolver {
 		}
 		else if (value instanceof TypedStringValue) {
 			// Convert value to target type here.
+			//TypedStringVale为字面上的string类型，实际可能带placeHolder等等
 			TypedStringValue typedStringValue = (TypedStringValue) value;
+			//计算实际的值，可能配置的表面字符是el表达式等等，注意el表达式只在applicationcontext才支持
 			Object valueObject = evaluate(typedStringValue);
 			try {
 				Class<?> resolvedTargetType = resolveTargetType(typedStringValue);
+				//如果指定了targetType则使用相应的converter进行转换
 				if (resolvedTargetType != null) {
 					return this.typeConverter.convertIfNecessary(valueObject, resolvedTargetType);
 				}
 				else {
+					//否则返回原始值
 					return valueObject;
 				}
 			}
@@ -213,6 +226,7 @@ class BeanDefinitionValueResolver {
 	protected Object evaluate(TypedStringValue value) {
 		Object result = this.beanFactory.evaluateBeanDefinitionString(value.getValue(), this.beanDefinition);
 		if (!ObjectUtils.nullSafeEquals(result, value.getValue())) {
+			//如果包含表达式则设置标记，从而不缓存
 			value.setDynamic();
 		}
 		return result;

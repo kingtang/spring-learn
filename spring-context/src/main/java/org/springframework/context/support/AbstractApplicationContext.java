@@ -217,6 +217,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	 * Create a new AbstractApplicationContext with no parent.
 	 */
 	public AbstractApplicationContext() {
+		//创建资源解析器，用于解析ant 风格的路径比如classpath*:
 		this.resourcePatternResolver = getResourcePatternResolver();
 	}
 
@@ -445,6 +446,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	public void refresh() throws BeansException, IllegalStateException {
 		synchronized (this.startupShutdownMonitor) {
 			// Prepare this context for refreshing.
+			//主要是扩展使用，其中也做了一些校验
 			prepareRefresh();
 
 			// Tell the subclass to refresh the internal bean factory.
@@ -516,6 +518,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 		}
 
 		// Initialize any placeholder property sources in the context environment
+		//空方法，扩展使用，可以被覆写
 		initPropertySources();
 
 		// Validate that all properties marked as required are resolvable

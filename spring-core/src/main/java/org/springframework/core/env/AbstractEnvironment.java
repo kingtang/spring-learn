@@ -541,6 +541,7 @@ public abstract class AbstractEnvironment implements ConfigurableEnvironment {
 	}
 
 	public String resolveRequiredPlaceholders(String text) throws IllegalArgumentException {
+		//使用propertyResolver解析资源文件路径中的占位符${}
 		return this.propertyResolver.resolveRequiredPlaceholders(text);
 	}
 

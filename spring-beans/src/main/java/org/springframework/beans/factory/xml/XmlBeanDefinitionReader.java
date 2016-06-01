@@ -332,6 +332,7 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
 				if (encodedResource.getEncoding() != null) {
 					inputSource.setEncoding(encodedResource.getEncoding());
 				}
+				//加载bean定义
 				return doLoadBeanDefinitions(inputSource, encodedResource.getResource());
 			}
 			finally {
@@ -385,7 +386,9 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
 	protected int doLoadBeanDefinitions(InputSource inputSource, Resource resource)
 			throws BeanDefinitionStoreException {
 		try {
+			//获取校验模式，主要有DTD和XSD
 			int validationMode = getValidationModeForResource(resource);
+			//解析资源文件
 			Document doc = this.documentLoader.loadDocument(
 					inputSource, getEntityResolver(), this.errorHandler, validationMode, isNamespaceAware());
 			return registerBeanDefinitions(doc, resource);

@@ -208,7 +208,7 @@ public abstract class AopUtils {
 		if (!pc.getClassFilter().matches(targetClass)) {
 			return false;
 		}
-
+		//获取method匹配器，
 		MethodMatcher methodMatcher = pc.getMethodMatcher();
 		IntroductionAwareMethodMatcher introductionAwareMethodMatcher = null;
 		if (methodMatcher instanceof IntroductionAwareMethodMatcher) {
@@ -220,7 +220,9 @@ public abstract class AopUtils {
 		for (Class<?> clazz : classes) {
 			Method[] methods = clazz.getMethods();
 			for (Method method : methods) {
+				//此处应用methodMatcher尝试匹配bean的所有方法
 				if ((introductionAwareMethodMatcher != null &&
+						//一旦能够匹配上，则返回true表示此Advisor可以应用到该bean中，换言之生成bean的代理的时候，需要织入该advisor
 						introductionAwareMethodMatcher.matches(method, targetClass, hasIntroductions)) ||
 						methodMatcher.matches(method, targetClass)) {
 					return true;
@@ -254,6 +256,7 @@ public abstract class AopUtils {
 	 * @return whether the pointcut can apply on any method
 	 */
 	public static boolean canApply(Advisor advisor, Class<?> targetClass, boolean hasIntroductions) {
+		//分别对spring包含的两种Advisor做处理
 		if (advisor instanceof IntroductionAdvisor) {
 			return ((IntroductionAdvisor) advisor).getClassFilter().matches(targetClass);
 		}
@@ -270,6 +273,7 @@ public abstract class AopUtils {
 	/**
 	 * Determine the sublist of the {@code candidateAdvisors} list
 	 * that is applicable to the given class.
+	 * 查找适用于已知类的所有advisors
 	 * @param candidateAdvisors the Advisors to evaluate
 	 * @param clazz the target class
 	 * @return sublist of Advisors that can apply to an object of the given class
@@ -281,6 +285,7 @@ public abstract class AopUtils {
 		}
 		List<Advisor> eligibleAdvisors = new LinkedList<Advisor>();
 		for (Advisor candidate : candidateAdvisors) {
+			//IntroductionAdvisor是一类特殊的Advisor，其只能作用于类上，添加方法或字段到被通知的类
 			if (candidate instanceof IntroductionAdvisor && canApply(candidate, clazz)) {
 				eligibleAdvisors.add(candidate);
 			}

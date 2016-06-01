@@ -36,7 +36,11 @@ public class AspectJAfterAdvice extends AbstractAspectJAdvice implements MethodI
 
 		super(aspectJBeforeAdviceMethod, pointcut, aif);
 	}
-
+	
+	/**
+	 * 方法后处理，实现的机制就是利用finally的原生特点，先执行链入口，如果后面没有后处理方法
+	 * 则将执行被代理对象的原生方法，之后执行finally中的后处理方法
+	 */
 	public Object invoke(MethodInvocation mi) throws Throwable {
 		try {
 			return mi.proceed();

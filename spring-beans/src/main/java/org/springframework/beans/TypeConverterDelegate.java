@@ -182,10 +182,11 @@ class TypeConverterDelegate {
 		}
 
 		boolean standardConversion = false;
-
+		
+		//类型转换，转换成需要的类型
 		if (requiredType != null) {
 			// Try to apply some standard type conversion rules if appropriate.
-
+			//待转换的值不为空，则尝试一些列的转换，这其中包括数据，集合，map，数组，字符等等
 			if (convertedValue != null) {
 				if (Object.class.equals(requiredType)) {
 					return (T) convertedValue;
@@ -276,7 +277,7 @@ class TypeConverterDelegate {
 			logger.debug("Original ConversionService attempt failed - ignored since " +
 					"PropertyEditor based conversion eventually succeeded", firstAttemptEx);
 		}
-
+		//类型匹配，则返回原型
 		return (T) convertedValue;
 	}
 

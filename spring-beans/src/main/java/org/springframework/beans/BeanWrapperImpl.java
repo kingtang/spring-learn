@@ -423,6 +423,7 @@ public class BeanWrapperImpl extends AbstractPropertyAccessor implements BeanWra
 		return false;
 	}
 
+	//属性是否为可写属性
 	public boolean isWritableProperty(String propertyName) {
 		try {
 			PropertyDescriptor pd = getPropertyDescriptorInternal(propertyName);
@@ -446,6 +447,7 @@ public class BeanWrapperImpl extends AbstractPropertyAccessor implements BeanWra
 	private Object convertIfNecessary(String propertyName, Object oldValue, Object newValue, Class<?> requiredType,
 			TypeDescriptor td) throws TypeMismatchException {
 		try {
+			//类型转换交给代理完成
 			return this.typeConverterDelegate.convertIfNecessary(propertyName, oldValue, newValue, requiredType, td);
 		}
 		catch (ConverterNotFoundException ex) {
@@ -474,6 +476,7 @@ public class BeanWrapperImpl extends AbstractPropertyAccessor implements BeanWra
 	 * Convert the given value for the specified property to the latter's type.
 	 * <p>This method is only intended for optimizations in a BeanFactory.
 	 * Use the {@code convertIfNecessary} methods for programmatic conversion.
+	 * 转换方法入参为两个一个是属性值，也就是待转换的值，另一个参数是属性名，利用属性名需要获取属性的具体类型。
 	 * @param value the value to convert
 	 * @param propertyName the target property
 	 * (note that nested or indexed properties are not supported here)
@@ -481,6 +484,7 @@ public class BeanWrapperImpl extends AbstractPropertyAccessor implements BeanWra
 	 * @throws TypeMismatchException if type conversion failed
 	 */
 	public Object convertForProperty(Object value, String propertyName) throws TypeMismatchException {
+		//获取属性描述器
 		PropertyDescriptor pd = getCachedIntrospectionResults().getPropertyDescriptor(propertyName);
 		if (pd == null) {
 			throw new InvalidPropertyException(getRootClass(), this.nestedPath + propertyName,
@@ -491,10 +495,11 @@ public class BeanWrapperImpl extends AbstractPropertyAccessor implements BeanWra
 
 	private Object convertForProperty(String propertyName, Object oldValue, Object newValue, TypeDescriptor td)
 			throws TypeMismatchException {
-
+		//此处已经可以获取参数的类型
 		return convertIfNecessary(propertyName, oldValue, newValue, td.getType(), td);
 	}
 
+	//该方法将属性描述器转换为spring内部的Property，该类描述了属性的宿主类，read方法，write方法，属性名等，其构造方法负责解析出属性的类型
 	private Property property(PropertyDescriptor pd) {
 		GenericTypeAwarePropertyDescriptor typeAware = (GenericTypeAwarePropertyDescriptor) pd;
 		return new Property(typeAware.getBeanClass(), typeAware.getReadMethod(), typeAware.getWriteMethod(), typeAware.getName());
@@ -1132,6 +1137,7 @@ public class BeanWrapperImpl extends AbstractPropertyAccessor implements BeanWra
 					}
 				}
 				else {
+					//反射调用
 					writeMethod.invoke(this.object, value);
 				}
 			}

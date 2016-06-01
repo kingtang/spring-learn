@@ -137,6 +137,7 @@ class InstantiationModelAwarePointcutAdvisorImpl
 
 
 	private Advice instantiateAdvice(AspectJExpressionPointcut pcut) {
+		//构造Aspect中的Advice
 		return this.atAspectJAdvisorFactory.getAdvice(
 				this.method, pcut, this.aspectInstanceFactory, this.declarationOrder, this.aspectName);
 	}

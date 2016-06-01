@@ -70,6 +70,7 @@ public abstract class AopNamespaceUtils {
 		registerComponentIfNecessary(beanDefinition, parserContext);
 	}
 
+	//注册AspectJAnnotation自动创建器
 	public static void registerAspectJAnnotationAutoProxyCreatorIfNecessary(
 			ParserContext parserContext, Element sourceElement) {
 
@@ -101,6 +102,7 @@ public abstract class AopNamespaceUtils {
 	}
 
 
+	//该方法主要是进行bean属性配置
 	private static void useClassProxyingIfNecessary(BeanDefinitionRegistry registry, Element sourceElement) {
 		if (sourceElement != null) {
 			boolean proxyTargetClass = Boolean.valueOf(sourceElement.getAttribute(PROXY_TARGET_CLASS_ATTRIBUTE));

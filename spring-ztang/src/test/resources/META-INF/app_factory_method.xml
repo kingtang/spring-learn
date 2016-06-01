@@ -5,6 +5,8 @@
         http://www.springframework.org/schema/beans/spring-beans.xsd">
 
     <bean id="userFactory" class="org.springframework.domain.factory.UserFactory" factory-method="getInstance">
+    	<constructor-arg value="tang"/>
+    	<constructor-arg value="1" />
     </bean>
 	
 

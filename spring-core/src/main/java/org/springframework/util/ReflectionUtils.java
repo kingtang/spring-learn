@@ -488,6 +488,7 @@ public abstract class ReflectionUtils {
 		// Keep backing up the inheritance hierarchy.
 		Method[] methods = getDeclaredMethods(clazz);
 		for (Method method : methods) {
+			//过滤器先过滤掉一部分方法
 			if (mf != null && !mf.matches(method)) {
 				continue;
 			}

@@ -641,6 +641,7 @@ public abstract class AbstractAspectJAdvice implements Advice, AspectJPrecedence
 	 * Get the current join point match at the join point we are being dispatched on.
 	 */
 	protected JoinPointMatch getJoinPointMatch() {
+		//获取执行上下文
 		MethodInvocation mi = ExposeInvocationInterceptor.currentInvocation();
 		if (!(mi instanceof ProxyMethodInvocation)) {
 			throw new IllegalStateException("MethodInvocation is not a Spring ProxyMethodInvocation: " + mi);

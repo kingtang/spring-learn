@@ -64,6 +64,7 @@ class LoadTimeWeaverBeanDefinitionParser extends AbstractSingleBeanDefinitionPar
 	protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
 		builder.setRole(BeanDefinition.ROLE_INFRASTRUCTURE);
 
+		//判断是否启用了Aspectj织入功能
 		if (isAspectJWeavingEnabled(element.getAttribute(ASPECTJ_WEAVING_ATTRIBUTE), parserContext)) {
 			RootBeanDefinition weavingEnablerDef = new RootBeanDefinition();
 			weavingEnablerDef.setBeanClassName(ASPECTJ_WEAVING_ENABLER_CLASS_NAME);
@@ -84,6 +85,7 @@ class LoadTimeWeaverBeanDefinitionParser extends AbstractSingleBeanDefinitionPar
 		}
 		else {
 			// Determine default...
+			//如果未配置则自动探测，依据是在classpath下存在META-INF/aop.xml文件
 			ClassLoader cl = parserContext.getReaderContext().getResourceLoader().getClassLoader();
 			return (cl.getResource(AspectJWeavingEnabler.ASPECTJ_AOP_XML_RESOURCE) != null);
 		}
