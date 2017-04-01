@@ -66,6 +66,8 @@ public abstract class DataSourceUtils {
 	 * when using {@link DataSourceTransactionManager}. Will bind a Connection to the
 	 * thread if transaction synchronization is active, e.g. when running within a
 	 * {@link org.springframework.transaction.jta.JtaTransactionManager JTA} transaction).
+	 * 异常体系转换，由于jdk的sql异常非常简陋，因此spring封装了不同的异常，并且都是unchecked的和有意义的，比如这里的获取不到连接异常。
+	 * 此外获取连接的时候还要考虑是否有事务被挂在当前的线程上。
 	 * @param dataSource the DataSource to obtain Connections from
 	 * @return a JDBC Connection from the given DataSource
 	 * @throws org.springframework.jdbc.CannotGetJdbcConnectionException
@@ -110,6 +112,7 @@ public abstract class DataSourceUtils {
 		logger.debug("Fetching JDBC Connection from DataSource");
 		Connection con = dataSource.getConnection();
 
+		//判断是否已经有事务绑定到了当前线程，绑定过程由事务管理器负责
 		if (TransactionSynchronizationManager.isSynchronizationActive()) {
 			logger.debug("Registering transaction synchronization for JDBC Connection");
 			// Use same Connection for further JDBC actions within the transaction.

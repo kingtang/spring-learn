@@ -59,4 +59,10 @@ public class User {
 		this.birth = birth;
 	}
 
+	@Override
+	public String toString() {
+		return "User [id=" + id + ", name=" + name + ", password=" + password + ", age=" + age + ", birth=" + birth
+				+ "]";
+	}
+
 }

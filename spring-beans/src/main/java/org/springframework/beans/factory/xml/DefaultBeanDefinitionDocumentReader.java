@@ -97,6 +97,7 @@ public class DefaultBeanDefinitionDocumentReader implements BeanDefinitionDocume
 	public void registerBeanDefinitions(Document doc, XmlReaderContext readerContext) {
 		this.readerContext = readerContext;
 		logger.debug("Loading bean definitions");
+		//获取文档的根节点，根节点为beans
 		Element root = doc.getDocumentElement();
 		doRegisterBeanDefinitions(root);
 	}
@@ -125,6 +126,7 @@ public class DefaultBeanDefinitionDocumentReader implements BeanDefinitionDocume
 	 * Register each bean definition within the given root {@code <beans/>} element.
 	 */
 	protected void doRegisterBeanDefinitions(Element root) {
+		//判断是否有profile标签，profile类似定义多种规格，不同的场景使用不同的profile，类似maven中的profile
 		String profileSpec = root.getAttribute(PROFILE_ATTRIBUTE);
 		if (StringUtils.hasText(profileSpec)) {
 			String[] specifiedProfiles = StringUtils.tokenizeToStringArray(
@@ -140,6 +142,7 @@ public class DefaultBeanDefinitionDocumentReader implements BeanDefinitionDocume
 		// the new (child) delegate with a reference to the parent for fallback purposes,
 		// then ultimately reset this.delegate back to its original (parent) reference.
 		// this behavior emulates a stack of delegates without actually necessitating one.
+		//实现类似栈的处理方式，beans允许嵌套，因此有父子之分，第一个beans进来后parent为null
 		BeanDefinitionParserDelegate parent = this.delegate;
 		this.delegate = createDelegate(this.readerContext, root, parent);
 
@@ -175,6 +178,7 @@ public class DefaultBeanDefinitionDocumentReader implements BeanDefinitionDocume
 	 * @param root the DOM root element of the document
 	 */
 	protected void parseBeanDefinitions(Element root, BeanDefinitionParserDelegate delegate) {
+		//默认标签解析，比如bean
 		if (delegate.isDefaultNamespace(root)) {
 			NodeList nl = root.getChildNodes();
 			for (int i = 0; i < nl.getLength(); i++) {
@@ -191,12 +195,13 @@ public class DefaultBeanDefinitionDocumentReader implements BeanDefinitionDocume
 			}
 		}
 		else {
+			//自定义标签解析，比如dubbo
 			delegate.parseCustomElement(root);
 		}
 	}
 
 	/**
-	 * 顶层的元素四种，分别是improt、alias、bean、beans
+	 * 顶层的四种元素，分别是improt、alias、bean、beans
 	 * 
 	 * @param ele
 	 * @param delegate
@@ -213,7 +218,7 @@ public class DefaultBeanDefinitionDocumentReader implements BeanDefinitionDocume
 		}
 		else if (delegate.nodeNameEquals(ele, NESTED_BEANS_ELEMENT)) {
 			// recurse
-			//如果是beans则循环调用
+			//如果是beans则循环调用，此处和本类的doRegisterBeanDefinitions方法中的注释呼应
 			doRegisterBeanDefinitions(ele);
 		}
 	}
@@ -322,6 +327,12 @@ public class DefaultBeanDefinitionDocumentReader implements BeanDefinitionDocume
 		//具体的解析动作由代理完成，并包装成Holder
 		BeanDefinitionHolder bdHolder = delegate.parseBeanDefinitionElement(ele);
 		if (bdHolder != null) {
+			//解析完自定义的属性或者标签后，还会判断是否有自定义的属性或者标签，该方法完成的即是该逻辑，比如下面的配置
+			/**
+			 * <bean customAttr="a">
+			 * 	<customTag/>
+			 * </bean>
+			 */
 			bdHolder = delegate.decorateBeanDefinitionIfRequired(ele, bdHolder);
 			try {
 				// Register the final decorated instance.

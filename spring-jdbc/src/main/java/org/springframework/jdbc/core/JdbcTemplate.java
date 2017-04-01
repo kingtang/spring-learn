@@ -427,13 +427,14 @@ public class JdbcTemplate extends JdbcAccessor implements JdbcOperations {
 		}
 		execute(new ExecuteStatementCallback());
 	}
-
+	//查询接口，传入sql语句，结果的组装交给Extractor
 	public <T> T query(final String sql, final ResultSetExtractor<T> rse) throws DataAccessException {
 		Assert.notNull(sql, "SQL must not be null");
 		Assert.notNull(rse, "ResultSetExtractor must not be null");
 		if (logger.isDebugEnabled()) {
 			logger.debug("Executing SQL query [" + sql + "]");
 		}
+		//内部类，而且是方法级别的内部类，由于这里需要实现两个接口，因此定义了一个内部类，而不能直接使用new 匿名内部类
 		class QueryStatementCallback implements StatementCallback<T>, SqlProvider {
 			public T doInStatement(Statement stmt) throws SQLException {
 				ResultSet rs = null;

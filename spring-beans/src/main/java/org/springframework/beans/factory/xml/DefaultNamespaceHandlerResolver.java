@@ -35,7 +35,9 @@ import org.springframework.util.CollectionUtils;
  * Default implementation of the {@link NamespaceHandlerResolver} interface.
  * Resolves namespace URIs to implementation classes based on the mappings
  * contained in mapping file.
- *
+ * 默认的命名空间解析器，默认情况下会读取META-INF/srping.handlers中的解析器，Spring默认提供了一些
+ * 解析器用来解析不同的命名空间。
+ * 通常自定义标签的实现即是通过NamespaceHandlerResolver完成，比如Dubbo、Motan、DSF等。
  * <p>By default, this implementation looks for the mapping file at
  * {@code META-INF/spring.handlers}, but this can be changed using the
  * {@link #DefaultNamespaceHandlerResolver(ClassLoader, String)} constructor.
