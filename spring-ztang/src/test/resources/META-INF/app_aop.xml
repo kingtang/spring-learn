@@ -10,5 +10,6 @@
   	<aop:aspectj-autoproxy></aop:aspectj-autoproxy>
 	<bean id="test" class="org.springframework.aop.TestBean"></bean>
 	<bean class="org.springframework.aop.AspectjTest" />
-	<bean id="myTest" class="org.springframework.aop.MyTest"></bean>
+	<bean id="myTest" class="org.springframework.aop.MyTest">
+	</bean>
 </beans>

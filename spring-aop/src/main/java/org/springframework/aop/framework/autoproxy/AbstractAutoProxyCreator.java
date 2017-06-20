@@ -269,14 +269,17 @@ public abstract class AbstractAutoProxyCreator extends ProxyConfig
 	}
 
 	public Object postProcessBeforeInstantiation(Class<?> beanClass, String beanName) throws BeansException {
-		//获取key，很简单的组装
+		//获取key，很简单的组装，类名_方法名
 		Object cacheKey = getCacheKey(beanClass, beanName);
 
 		if (beanName == null || !this.targetSourcedBeans.containsKey(beanName)) {
+			//切面Bean不能被自己织入
 			if (this.advisedBeans.containsKey(cacheKey)) {
 				return null;
 			}
-			//基础类不进行代理
+			//基础类不进行代理，当前的基础类有：org.aopalliance.aop.Advice、org.springframework.aop.Advisor
+			//org.springframework.aop.framework.AopInfrastructureBean
+			//或者当前bean被Aspectj注解标注、当前bean是Acj动态生成
 			if (isInfrastructureClass(beanClass) || shouldSkip(beanClass, beanName)) {
 				this.advisedBeans.put(cacheKey, Boolean.FALSE);
 				return null;

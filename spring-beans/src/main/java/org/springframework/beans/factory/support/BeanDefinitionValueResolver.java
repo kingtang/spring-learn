@@ -83,13 +83,14 @@ class BeanDefinitionValueResolver {
 
 
 	/**
-	 * 该方法为很重要的方法，主要负责对字段属性或者构造器的参数做解析，解析的类型根据注释有以下几类：
+	 * 该方法很重要，主要负责对字段属性或者构造器的参数做解析，解析的类型根据注释有以下几类：
 	 * 1、BeanDefinition，内部bean为此类型，也为匿名类型
 	 * 2、RuntimeBeanReference，ref类型，此类型必须被解析
 	 * 3、ManagedList，集合类型list
 	 * 4、ManagedSet，集合类型set
 	 * 5、ManagedMap，集合类型map
 	 * 6、ordinary，普通类型或者null，遇到此类型直接返回
+	 * 
 	 * Given a PropertyValue, return a value, resolving any references to other
 	 * beans in the factory if necessary. The value could be:
 	 * <li>A BeanDefinition, which leads to the creation of a corresponding
@@ -125,6 +126,7 @@ class BeanDefinitionValueResolver {
 			}
 			return refName;
 		}
+		//当属性为内部bean时
 		else if (value instanceof BeanDefinitionHolder) {
 			// Resolve BeanDefinitionHolder: contains BeanDefinition with name and aliases.
 			BeanDefinitionHolder bdHolder = (BeanDefinitionHolder) value;
@@ -287,6 +289,7 @@ class BeanDefinitionValueResolver {
 				}
 			}
 			// Actually create the inner bean instance now...
+			//到这里才去实例化inner bean
 			Object innerBean = this.beanFactory.createBean(actualInnerBeanName, mbd, null);
 			if (innerBean instanceof FactoryBean) {
 				boolean synthetic = mbd.isSynthetic();
@@ -340,6 +343,8 @@ class BeanDefinitionValueResolver {
 			}
 			else {
 				Object bean = this.beanFactory.getBean(refName);
+				//注册双向依赖关系，在做销毁的时候能够按照顺序完成
+				//比如A依赖B和C，则有A->(B,C)，B-->A,C-->A（实线为依赖，虚线为被依赖）
 				this.beanFactory.registerDependentBean(refName, this.beanName);
 				return bean;
 			}

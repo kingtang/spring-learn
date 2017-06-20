@@ -4,7 +4,18 @@ public class Student {
 	
 	private int id;
 	
-	public Student()
+	private User user;
+	public User getUser()
+    {
+        return user;
+    }
+
+    public void setUser(User user)
+    {
+        this.user = user;
+    }
+
+    public Student()
 	{
 		System.out.println("student constructor is invoked.");
 		id = 3;

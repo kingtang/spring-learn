@@ -4,13 +4,12 @@
     xsi:schemaLocation="http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-    <bean class="org.springframework.domain.beanpostpro.MyBeanPostProcessor">
-    </bean>
-	
 	<bean id="student" class="org.springframework.domain.Student">
+		<property name="id">
+			<value>90</value>
+		</property>
+		<property name="user" ref="user"/>
 	</bean>
 	
-	<bean id="user" class="org.springframework.domain.User">
-	</bean>
-
+	<bean id="user" class="org.springframework.domain.User"/>
 </beans>

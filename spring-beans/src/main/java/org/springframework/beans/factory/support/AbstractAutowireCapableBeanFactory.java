@@ -448,6 +448,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		try {
 			// Give BeanPostProcessors a chance to return a proxy instead of the target bean instance.
 			//初始化之前给与自定义bean的机会，假设有BeanPostProcessors对mbd进行后处理，则直接返回bean，创建bean的动作由用户提供，spring不再负责。
+			//AOP在此完成代理的生成?
 			Object bean = resolveBeforeInstantiation(beanName, mbd);
 			if (bean != null) {
 				return bean;
@@ -497,7 +498,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		// Allow post-processors to modify the merged bean definition.
 		synchronized (mbd.postProcessingLock) {
 			if (!mbd.postProcessed) {
-				//mergedBean后处理
+				//mergedBean后处理,执行MergedBeanDefinitionPostProcessor的后处理逻辑
 				applyMergedBeanDefinitionPostProcessors(mbd, beanType, beanName);
 				//标识已经应用过了后处理
 				mbd.postProcessed = true;
@@ -961,7 +962,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		// Make sure bean class is actually resolved at this point.
 		//此处应该已经可以从缓存中获取class对象了
 		Class<?> beanClass = resolveBeanClass(mbd, beanName);
-		//条件检查
+		//条件检查，要创建的bean修饰符应该是public
 		if (beanClass != null && !Modifier.isPublic(beanClass.getModifiers()) && !mbd.isNonPublicAccessAllowed()) {
 			throw new BeanCreationException(mbd.getResourceDescription(), beanName,
 					"Bean class isn't public, and non-public access not allowed: " + beanClass.getName());
@@ -1001,6 +1002,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		}
 
 		// No special handling: simply use no-arg constructor.
+		//使用默认的构造函数
 		return instantiateBean(beanName, mbd);
 	}
 
@@ -1048,8 +1050,10 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 				}, getAccessControlContext());
 			}
 			else {
+				//获取初始化策略，比如cglib,jdkproxy等
 				beanInstance = getInstantiationStrategy().instantiate(mbd, beanName, parent);
 			}
+			//关注BeanWapper，包装了哪些东西。
 			BeanWrapper bw = new BeanWrapperImpl(beanInstance);
 			initBeanWrapper(bw);
 			return bw;
@@ -1134,7 +1138,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 				}
 			}
 		}
-		//用户可以绝对自定义修改完bean后是否让spring继续接管处理
+		//用户可以决定自定义修改完bean后是否让spring继续接管处理
 		if (!continueWithPropertyPopulation) {
 			return;
 		}
@@ -1439,7 +1443,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 			else {
 				String propertyName = pv.getName();
 				Object originalValue = pv.getValue();
-				//此时的属性值已经被解析完了
+				//解析属性，比如ref类型、bean holder类型
 				Object resolvedValue = valueResolver.resolveValueIfNecessary(pv, originalValue);
 				Object convertedValue = resolvedValue;
 				boolean convertible = bw.isWritableProperty(propertyName) &&

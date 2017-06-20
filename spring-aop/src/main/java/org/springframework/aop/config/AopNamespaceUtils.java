@@ -76,6 +76,17 @@ public abstract class AopNamespaceUtils {
 
 		BeanDefinition beanDefinition = AopConfigUtils.registerAspectJAnnotationAutoProxyCreatorIfNecessary(
 				parserContext.getRegistry(), parserContext.extractSource(sourceElement));
+		//设置代理的属性，比如强制使用cglib(proxy-target-class)
+		//expose-proxy表示是否暴露代理，应用场景为，被代理对象的方法A调用自己的方法B，则B是原生的方法而不是代理后的方法
+		/**
+		 * public void A()
+		 * {
+		 * 	this.B();
+		 * }
+		 * public void B()
+		 * {
+		 * }
+		 */
 		useClassProxyingIfNecessary(parserContext.getRegistry(), sourceElement);
 		registerComponentIfNecessary(beanDefinition, parserContext);
 	}

@@ -8,34 +8,30 @@ import org.springframework.beans.factory.config.InstantiationAwareBeanPostProces
 
 public class MyBeanPostProcessor implements InstantiationAwareBeanPostProcessor{
 
-	@Override
 	public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
-		System.out.println("post process before.");
+		System.out.println("postProcessBeforeInitialization.");
 		return null;
 	}
 
-	@Override
 	public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
-		System.out.println("post process after.");
+		System.out.println("postProcessAfterInitialization.");
 		return null;
 	}
 
-	@Override
 	public Object postProcessBeforeInstantiation(Class<?> beanClass, String beanName) throws BeansException {
 		// TODO Auto-generated method stub
+	    System.out.println("postProcessBeforeInstantiation.");
 		return null;
 	}
 
-	@Override
 	public boolean postProcessAfterInstantiation(Object bean, String beanName) throws BeansException {
-		// TODO Auto-generated method stub
+	    System.out.println("postProcessAfterInstantiation.");
 		return false;
 	}
 
-	@Override
 	public PropertyValues postProcessPropertyValues(PropertyValues pvs, PropertyDescriptor[] pds, Object bean,
 			String beanName) throws BeansException {
-		// TODO Auto-generated method stub
+	    System.out.println("postProcessAfterInstantiation.");
 		return null;
 	}
 

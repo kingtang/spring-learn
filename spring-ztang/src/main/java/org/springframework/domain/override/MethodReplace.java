@@ -8,7 +8,6 @@ public class MethodReplace implements MethodReplacer {
 
 	private Object target;
 	
-	@Override
 	public Object reimplement(Object obj, Method method, Object[] args) throws Throwable {
 		System.out.println("before method");
 		//method.invoke(target, args);

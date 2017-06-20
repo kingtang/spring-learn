@@ -476,7 +476,7 @@ public class BeanWrapperImpl extends AbstractPropertyAccessor implements BeanWra
 	 * Convert the given value for the specified property to the latter's type.
 	 * <p>This method is only intended for optimizations in a BeanFactory.
 	 * Use the {@code convertIfNecessary} methods for programmatic conversion.
-	 * 转换方法入参为两个一个是属性值，也就是待转换的值，另一个参数是属性名，利用属性名需要获取属性的具体类型。
+	 * 转换方法入参为两个，一个是属性值，也就是待转换的值，另一个参数是属性名，利用属性名需要获取属性的具体类型。
 	 * @param value the value to convert
 	 * @param propertyName the target property
 	 * (note that nested or indexed properties are not supported here)
@@ -531,6 +531,7 @@ public class BeanWrapperImpl extends AbstractPropertyAccessor implements BeanWra
 	protected BeanWrapperImpl getBeanWrapperForPropertyPath(String propertyPath) {
 		int pos = PropertyAccessorUtils.getFirstNestedPropertySeparatorIndex(propertyPath);
 		// Handle nested properties recursively.
+		//此处非属性链的最后一层，因此递归查询
 		if (pos > -1) {
 			String nestedProperty = propertyPath.substring(0, pos);
 			String nestedPath = propertyPath.substring(pos + 1);
@@ -538,6 +539,7 @@ public class BeanWrapperImpl extends AbstractPropertyAccessor implements BeanWra
 			return nestedBw.getBeanWrapperForPropertyPath(nestedPath);
 		}
 		else {
+			//此处已经为属性链的最后一层
 			return this;
 		}
 	}
@@ -889,6 +891,9 @@ public class BeanWrapperImpl extends AbstractPropertyAccessor implements BeanWra
 		nestedBw.setPropertyValue(tokens, new PropertyValue(propertyName, value));
 	}
 
+	/**
+	 * 设置单个属性
+	 */
 	@Override
 	public void setPropertyValue(PropertyValue pv) throws BeansException {
 		PropertyTokenHolder tokens = (PropertyTokenHolder) pv.resolvedTokens;
@@ -913,6 +918,12 @@ public class BeanWrapperImpl extends AbstractPropertyAccessor implements BeanWra
 		}
 	}
 
+	/**
+	 * 设置属性值
+	 * @param tokens
+	 * @param pv
+	 * @throws BeansException
+	 */
 	@SuppressWarnings("unchecked")
 	private void setPropertyValue(PropertyTokenHolder tokens, PropertyValue pv) throws BeansException {
 		String propertyName = tokens.canonicalName;

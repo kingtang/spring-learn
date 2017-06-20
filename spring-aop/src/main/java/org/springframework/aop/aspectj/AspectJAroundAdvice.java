@@ -55,7 +55,7 @@ public class AspectJAroundAdvice extends AbstractAspectJAdvice implements Method
 	}
 
 	/**
-	 * around拦截实现
+	 * around拦截实现，类似JDK动态代理
 	 */
 	public Object invoke(MethodInvocation mi) throws Throwable {
 		if (!(mi instanceof ProxyMethodInvocation)) {

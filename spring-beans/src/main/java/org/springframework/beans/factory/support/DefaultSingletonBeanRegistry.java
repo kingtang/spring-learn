@@ -400,6 +400,13 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 	}
 
 	/**
+	 * 依赖关系有两种：
+	 * 1、A通过ref依赖B
+	 * 2、inner bean依赖外部的容器bean比如
+	 * <bean class="outer">
+	 * 	<bean class="innier"/>
+	 * </bean>
+	 * 
 	 * Register a dependent bean for the given bean,
 	 * to be destroyed before the given bean is destroyed.
 	 * @param beanName the name of the bean

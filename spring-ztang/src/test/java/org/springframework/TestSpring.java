@@ -56,12 +56,31 @@ public class TestSpring
     }
     
     /**
+     * 内部Bean
+     */
+    @Test
+    public void xmlFactoryInnerBean()
+    {
+        BeanFactory factory = new XmlBeanFactory(new ClassPathResource("META-INF/app_inner.xml"));
+        Student user = (Student)factory.getBean("student");
+        System.out.println(user.toString());
+    }
+    
+    /**
      * 了解beans嵌套的处理逻辑
      */
     @Test
     public void xmlFactoryBeanNested()
     {
         BeanFactory factory = new XmlBeanFactory(new ClassPathResource("META-INF/app_nested.xml"));
+        Student user = (Student)factory.getBean("student");
+        System.out.println(user.toString());
+    }
+    
+    @Test
+    public void xmlFactoryBeanRef()
+    {
+        BeanFactory factory = new XmlBeanFactory(new ClassPathResource("META-INF/app_ref.xml"));
         Student user = (Student)factory.getBean("student");
         System.out.println(user.toString());
     }
@@ -111,6 +130,9 @@ public class TestSpring
         
         Student a = (Student)factory.getBean("student");
         System.out.println(a);
+        
+        User user = (User)factory.getBean("user");
+        System.out.println(user);
     }
     
     @Test
@@ -170,6 +192,15 @@ public class TestSpring
         
         System.out.println(userService.getUser("1"));
         userService.saveWithException();
+    }
+    
+    @Test
+    public void testApplicationContext()
+    {
+        ApplicationContext context = new ClassPathXmlApplicationContext("META-INF/app_simple.xml");
+        Student s = (Student)context.getBean("student");
+        
+        System.out.println(s.getId());
     }
     
     @Test
