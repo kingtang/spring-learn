@@ -83,8 +83,10 @@ public abstract class AbstractAspectJAdvisorFactory implements AspectJAdvisorFac
 	}
 
 	private static <A extends Annotation> AspectJAnnotation<A> findAnnotation(Method method, Class<A> toLookFor) {
+		//寻找合适的注解
 		A result = AnnotationUtils.findAnnotation(method, toLookFor);
 		if (result != null) {
+			//构造注解表达实例包含的信息有expression，参数信息
 			return new AspectJAnnotation<A>(result);
 		}
 		else {
@@ -260,6 +262,12 @@ public abstract class AbstractAspectJAdvisorFactory implements AspectJAdvisorFac
 			throw new IllegalStateException("Unknown annotation type: " + annotation.toString());
 		}
 
+		/**
+		 * 解析得到PointCut Expression，这里可以是value指定的表达式或者pointcut直接指定的表达式
+		 * @param annotation
+		 * @return
+		 * @throws Exception
+		 */
 		private String resolveExpression(A annotation) throws Exception {
 			String expression = null;
 			for (String methodName : EXPRESSION_PROPERTIES) {

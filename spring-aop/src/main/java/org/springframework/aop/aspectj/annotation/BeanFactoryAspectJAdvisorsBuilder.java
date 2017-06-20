@@ -73,6 +73,8 @@ public class BeanFactoryAspectJAdvisorsBuilder {
 
 
 	/**
+	 * 查找切面类的注解，并且将AspectJ Advice转换为Spring的Advisor
+	 * 
 	 * Look for AspectJ-annotated aspect beans in the current bean factory,
 	 * and return to a list of Spring AOP Advisors representing them.
 	 * <p>Creates a Spring Advisor for each AspectJ advice method.
@@ -88,7 +90,7 @@ public class BeanFactoryAspectJAdvisorsBuilder {
 				//获取所有AspectBean中的Advisor，一般一个Bean中可能有多个Advisor
 				List<Advisor> advisors = new LinkedList<Advisor>();
 				aspectNames = new LinkedList<String>();
-				//获取当前工厂内的所有Object及其子类
+				//获取当前工厂内的所有Object及其子类，包括用户定义的和spring自带的。
 				String[] beanNames =
 						BeanFactoryUtils.beanNamesForTypeIncludingAncestors(this.beanFactory, Object.class, true, false);
 				for (String beanName : beanNames) {
@@ -103,7 +105,7 @@ public class BeanFactoryAspectJAdvisorsBuilder {
 					if (beanType == null) {
 						continue;
 					}
-					//判断一个类是否是方面类
+					//判断一个类是否是方面类，带有Aspect注解的类并且不是AspectJ生成的类
 					if (this.advisorFactory.isAspect(beanType)) {
 						//该bean符合Aspect
 						aspectNames.add(beanName);
@@ -112,7 +114,8 @@ public class BeanFactoryAspectJAdvisorsBuilder {
 						if (amd.getAjType().getPerClause().getKind() == PerClauseKind.SINGLETON) {
 							MetadataAwareAspectInstanceFactory factory =
 									new BeanFactoryAspectInstanceFactory(this.beanFactory, beanName);
-							//获取Advisor
+							//获取Advisor，该方法逻辑复杂，两个主要的分支为
+							//1、获取advice方法。2、获取Introduction(@DeclareParents)属性。
 							List<Advisor> classAdvisors = this.advisorFactory.getAdvisors(factory);
 							if (this.beanFactory.isSingleton(beanName)) {
 								this.advisorsCache.put(beanName, classAdvisors);

@@ -103,7 +103,9 @@ public class ReflectiveAspectJAdvisorFactory extends AbstractAspectJAdvisorFacto
 				new LazySingletonAspectInstanceFactoryDecorator(maaif);
 
 		final List<Advisor> advisors = new LinkedList<Advisor>();
+		//获取要织入的逻辑，比如方法调用前，方法调用后等等
 		for (Method method : getAdvisorMethods(aspectClass)) {
+			//生成Advisor默认实现类为InstantiationModelAwarePointcutAdvisorImpl
 			Advisor advisor = getAdvisor(method, lazySingletonAspectInstanceFactory, advisors.size(), aspectName);
 			if (advisor != null) {
 				advisors.add(advisor);
@@ -187,15 +189,17 @@ public class ReflectiveAspectJAdvisorFactory extends AbstractAspectJAdvisorFacto
 
 	private AspectJExpressionPointcut getPointcut(Method candidateAdviceMethod, Class<?> candidateAspectClass) {
 		//获取方法上的注解，主要有以下几种Before.class, Around.class, After.class, AfterReturning.class, AfterThrowing.class, Pointcut.class
-		//且优先返回最前面的注解
+		//且优先返回最前面的注解，此处的目的类似校验，如果AspectJ中没有以上advice，则不需要再生成代理类
 		AspectJAnnotation<?> aspectJAnnotation =
 				AbstractAspectJAdvisorFactory.findAspectJAnnotationOnMethod(candidateAdviceMethod);
 		//如果未找到合适的注解则返回空
 		if (aspectJAnnotation == null) {
 			return null;
 		}
+		//构造pointpuct的Spring抽象
 		AspectJExpressionPointcut ajexp =
 				new AspectJExpressionPointcut(candidateAspectClass, new String[0], new Class[0]);
+		//上面寻找Advice的时候会将Pointcut Expression解析出来
 		ajexp.setExpression(aspectJAnnotation.getPointcutExpression());
 		return ajexp;
 	}
@@ -208,7 +212,7 @@ public class ReflectiveAspectJAdvisorFactory extends AbstractAspectJAdvisorFacto
 		Class<?> candidateAspectClass = aif.getAspectMetadata().getAspectClass();
 		validate(candidateAspectClass);
 		
-		//获取advice方法上的aspectj注解
+		//获取advice方法上的aspectj注解，注解类型为Before.class, Around.class, After.class, AfterReturning.class, AfterThrowing.class, Pointcut.class
 		AspectJAnnotation<?> aspectJAnnotation =
 				AbstractAspectJAdvisorFactory.findAspectJAnnotationOnMethod(candidateAdviceMethod);
 		if (aspectJAnnotation == null) {
@@ -251,6 +255,8 @@ public class ReflectiveAspectJAdvisorFactory extends AbstractAspectJAdvisorFacto
 				}
 				break;
 			case AtAround:
+				//三个参数，参数一：Advice方法，切面方法比如打日志，校验。参数二：切面表达式，切面方法应用到哪些原生方法中。参数三：？
+				//该类底层继承了AspectJ的MethodInterceptor方法
 				springAdvice = new AspectJAroundAdvice(candidateAdviceMethod, ajexp, aif);
 				break;
 			case AtPointcut:
